@@ -1,0 +1,70 @@
+<html>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js "></script>
+<body>
+<button onclick="mineDust()">Mine Dust</button>
+<button onclick="buy(people)">Hire Person</button>
+<button onclick="buy(robots)">Buy Mining Robot</button>
+<button onclick="buy(dustRockets)">Buy Dust Harvesting Rocket</button>
+<button onclick="buy(lasers)">Buy Mining Laser</button>
+<button onclick="buy(planetDestroyers)">Buy Planet Destroyer</button>
+
+<p id="announcements"></p>
+<p id="total"></p>
+<p id="resources"></p>
+
+<script>
+// Production sources {number of sources, level of the sources, price, income per resource}
+var updateRate = 200;
+window.setInterval(updateMoney, updateRate);
+var resources = []
+var newResource = function (name, number, level, price, income) {
+	this.number = number;
+	this.level = level;
+	this.price = price;
+	this.income = income;
+	resources.push(this);
+}
+
+var spacedust = 0;
+var income = 0;
+var multiplier = .10; // amount by which price increases each purchase
+var annoucementTimeout = 5000;
+
+var people = newResource("people", 0, 0, 10, .10);
+var robots = newResource("robots", 0, 0, 100, 1);
+var dustRockets = newResource("dust rockets", 0, 0, 1000, 50);
+var lasers = newResource("mining lasers", 0, 0, 10000, 1000);
+var planetDestroyers = newResource("planet destroyers", 0, 0, 100000, 100000);
+
+function updateMoney() {
+    spacedust += income / (1000 / updateRate);
+    document.getElementById("total").innerHTML = spacedust;
+}
+
+function mineDust() {
+    spacedust += 1;
+    updateMoney();
+}
+
+function clearAnnouncement() {
+document.getElementById("announcements").innerHTML = "";
+}
+
+function buy(resource) {
+	if (spacedust >= resource.price) {
+		spacedust -= resource.price;
+		resource.number++;
+		resource.price += resource.price * multiplier;
+		document.getElementById("announcements").innerHTML = "Successfully purchased: " + resource.name + ". Now you have: " + resource.number;
+		updateMoney();
+	} 
+  else { 
+		document.getElementById("announcements").innerHTML = "Error: Not enough space dust!"; 
+setTimeout(clearAnnouncement, annoucementTimeout);
+	}
+}
+
+for (let resource of resources) {
+	document.write("<p id=\"" + resource.name + "\"></p>");
+}
+</script>
