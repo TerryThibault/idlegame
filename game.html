@@ -1,16 +1,25 @@
 <html>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js "></script>
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 <body>
-<button onclick="mineDust()">Mine Dust</button>
-<button onclick="buy(people)">Hire Person</button>
-<button onclick="buy(robots)">Buy Mining Robot</button>
-<button onclick="buy(dustRockets)">Buy Dust Harvesting Rocket</button>
-<button onclick="buy(lasers)">Buy Mining Laser</button>
-<button onclick="buy(planetDestroyers)">Buy Planet Destroyer</button>
+<div class="w3-row">
+<div class="w3-row">
+  <div class="w3-container w3-third">
+    <div onclick="mineDust()" class="w3-bar-item w3-button w3-border w3-block w3-ripple">Mine Dust</div><br>
+    <div onclick="buy(people)" class="w3-bar-item w3-button w3-border w3-block w3-ripple">Hire Person</div><br>
+    <div onclick="buy(robots)" class="w3-bar-item w3-button w3-border w3-block w3-ripple">Buy Mining Robot</div><br>
+    <div onclick="buy(dustRockets)" class="w3-bar-item w3-button w3-border w3-block w3-ripple">Buy Dust Harvesting Rocket</div><br>
+    <div onclick="buy(lasers)" class="w3-bar-item w3-button w3-border w3-block w3-ripple">Buy Mining Laser</div><br>
+    <div onclick="buy(planetDestroyers)" class="w3-bar-item w3-button w3-border w3-block w3-ripple">Buy Planet Destroyer</div><br>
+  </div>
+  <div class="w3-container w3-twothird">
+    <p id="announcements"></p>
+    <p id="total"></p>
+    <p id="resources"></p>
+  </div>
+  
+</div>
 
-<p id="announcements"></p>
-<p id="total"></p>
-<p id="resources"></p>
 
 <script>
 // Production sources {number of sources, level of the sources, price, income per resource}
