@@ -4,40 +4,56 @@
 <body>
 <div class="w3-row">
 <div class="w3-row">
-  <div class="w3-container w3-quarter">
-    <div onclick="mineDust()" class="w3-bar-item w3-button w3-border w3-block w3-ripple">Mine Dust</div><br>
-    <p id="total"></p>
-    <p id="resources"></p>
-  </div>
-  <div class="w3-container w3-half">
-    <p id="announcements"></p>
-  </div>
-  <div class="w3-container w3-quarter">
-    <div onclick="buy(people)" class="w3-bar-item w3-button w3-border w3-block w3-ripple w3-left-align">
-    Miner<br>
-    <font id="Miner Price" size="1"></font>
-    </div><br>
+    <div class="w3-container w3-quarter">
+        <div onclick="mineDust()" class="w3-bar-item w3-button w3-border w3-block w3-ripple">Mine Dust</div><br>
+        <p id="total"></p>
+        <p id="resources"></p>
+    </div>
+    <div class="w3-container w3-half">
+        <p id="announcements"></p>
+    </div>
+    <div id="resourceContainers" class="w3-container w3-quarter">
+        <div onclick="buy(people)" class="w3-bar-item w3-button w3-border w3-block w3-ripple w3-left-align">
+        Miner<br>
+        <font id="Miner Price" size="1"></font>
+        </div><br>
+
+        <div onclick="buy(robots)" class="w3-bar-item w3-button w3-border w3-block w3-ripple w3-left-align">
+        Mining Robot<br>
+        <font id="Robot Price" size="1"></font>
+        </div><br>
     
-    <div onclick="buy(robots)" class="w3-bar-item w3-button w3-border w3-block w3-ripple w3-left-align">
-    Mining Robot<br>
-    <font id="Robot Price" size="1"></font>
-    </div><br>
+        <div onclick="buy(dustRockets)" class="w3-bar-item w3-button w3-border w3-block w3-ripple w3-left-align">
+        Dust Harvesting Rocket<br>
+        <font id="Dust Rocket Price" size="1"></font>
+        </div><br>
     
-    <div onclick="buy(dustRockets)" class="w3-bar-item w3-button w3-border w3-block w3-ripple w3-left-align">
-    Dust Harvesting Rocket<br>
-    <font id="Dust Rocket Price" size="1"></font>
-    </div><br>
+        <div onclick="buy(lasers)" class="w3-bar-item w3-button w3-border w3-block w3-ripple w3-left-align">
+        Mining Laser<br>
+        <font id="Mining Laser Price" size="1"></font>
+        </div><br>
     
-    <div onclick="buy(lasers)" class="w3-bar-item w3-button w3-border w3-block w3-ripple w3-left-align">
-    Mining Laser<br>
-    <font id="Mining Laser Price" size="1"></font>
-    </div><br>
-    
-    <div onclick="buy(planetDestroyers)" class="w3-bar-item w3-button w3-border w3-block w3-ripple w3-left-align">
-    Planet Destroyer<br>
-    <font id="Planet Destroyer Price" size="1"></font>
-    </div><br>
-  </div>
+        <div onclick="buy(planetDestroyers)" class="w3-bar-item w3-button w3-border w3-block w3-ripple w3-left-align">
+        Planet Destroyer<br>
+        <font id="Planet Destroyer Price" size="1"></font>
+        </div><br>
+    </div>
+</div>
+
+
+<!-- Template to be used by the JS that writes to the DOM 
+
+    The idea here is that I'm going to use a JS loop (for each resource) to make all of the resource containers (see:resourceContainers)
+    For each resource, replace the _resourceObject with the object itself (variable name), the _resourceName with object.Name, etc.
+
+    This make my source HTML a lot prettier.
+-->
+
+<div style="display: none">
+        <div onclick="buy(_resourceObject)" class="w3-bar-item w3-button w3-border w3-block w3-ripple w3-left-align"> 
+        _resourceName<br>
+        <font id="_resoucePrice Price" size="1"></font>
+        </div><br>
 </div>
 
 
@@ -47,11 +63,11 @@ var updateRate = 200;
 window.setInterval(updateMoney, updateRate);
 var resources = []
 function Resource(name, number, level, price, income) {
-	this.name = name;
-  this.number = number;
-	this.level = level;
-	this.price = price;
-	this.income = income;
+    this.name = name;
+    this.number = number;
+    this.level = level;
+    this.price = price;
+    this.income = income;
 	resources.push(this);
 }
 
@@ -67,6 +83,12 @@ var dustRockets = new Resource("Dust Rocket", 0, 0, 1000, 50);
 var lasers = new Resource("Mining Laser", 0, 0, 10000, 1000);
 var planetDestroyers = new Resource("Planet Destroyer", 0, 0, 100000, 100000);
 updatePrices();
+
+function drawResourceContainers() {
+    for(const resource of resources) {
+        document.getElementById("resourceContainers").innerHTML += 
+    }
+}
 
 function updateMoney() {
     spacedust += totalIncome / (1000 / updateRate);
@@ -93,7 +115,7 @@ function mineDust() {
 }
 
 function clearAnnouncement() {
-document.getElementById("announcements").innerHTML = "";
+    document.getElementById("announcements").innerHTML = "";
 }
 
 function buy(resource) {
@@ -104,12 +126,12 @@ function buy(resource) {
     updateIncome();
     updateMoney();
     updatePrices();
-		document.getElementById("announcements").innerHTML = "Successfully purchased: " + resource.name + ". Now you have: " + resource.number;
+        document.getElementById("announcements").innerHTML = "Successfully purchased: " + resource.name + ". Now you have: " + resource.number;
 	} 
   else { 
-		document.getElementById("announcements").innerHTML = "Error: Not enough space dust!"; 
+        document.getElementById("announcements").innerHTML = "Error: Not enough space dust!"; 
 	}
-  clearTimeout(annoucementTimeout);
-  annoucementTimeout = setTimeout(clearAnnouncement, annoucementTimeoutLength);
+    clearTimeout(annoucementTimeout);
+    annoucementTimeout = setTimeout(clearAnnouncement, annoucementTimeoutLength);
 }
 </script>
