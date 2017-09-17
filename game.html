@@ -64,13 +64,13 @@
 -->
 
 <div style="display: none" id="upgradeTemplate">
-            <div onclick="buyResource(_resourceObject)" class="w3-row w3-button w3-border w3-block w3-ripple"> 
+            <div onclick="buyUpgrade(_upgradeObject)" class="w3-row w3-button w3-border w3-block w3-ripple"> 
                 <div class="w3-bar-item w3-left-align w3-quarter" style="padding-left: 0;padding-right: 0;">
-                    <font id="_resourceNumber Number" size="5">0</font>
+                    <font id="_upgradeNumber Number" size="5">0</font>
                 </div>
                 <div class="w3-bar-item w3-left-align w3-threequarter">
-                    _resourceName<br>
-                    <font id="_resourcePrice Price" size="1"></font>
+                    _upgradeName<br>
+                    <font id="_upgradePrice Price" size="1"></font>
                 </div>
             </div><br>
 </div>
@@ -118,7 +118,7 @@ var menuState = -1;
 
 drawResourceContainers();
 updatePrices();
-updateUpgrades();
+drawUpgrades();
 changeMenu(RESOURCES);
 
 function changeMenu(state) {
@@ -179,17 +179,17 @@ function updateNumber() {
     }
 }
 
-function updateUpgrades() {
+function drawUpgrades() {
     // Grab the template
     var template = document.getElementById("upgradeTemplate").innerHTML;
     document.getElementById("upgradeContainers").innerHTML = "";
     
-    for(const upgrade of upgrades) {
+    for(var i = 0; i < upgrades.length; ++i) {
         var tmp = template;
-        tmp = tmp.replace("_resourceObject", upgrade.name.replace(" ", "_"));
-        tmp = tmp.replace("_resourceNumber", upgrade.name);
-        tmp = tmp.replace("_resourceName", upgrade.name);
-        tmp = tmp.replace("_resourcePrice", upgrade.name);
+        tmp = tmp.replace("_upgradeObject", "upgrades[" + i + "]");
+        tmp = tmp.replace("_upgradeNumber", upgrade.name);
+        tmp = tmp.replace("_upgradeName", upgrade.name);
+        tmp = tmp.replace("_upgradePrice", upgrade.name);
         document.getElementById("upgradeContainers").innerHTML += tmp;
     }
 }
@@ -210,7 +210,7 @@ function buyUpgrade(upgrade) {
         updateIncome();
         updateMoney();
         updatePrices();
-        updateUpgrades();
+        drawUpgrades();
         document.getElementById("announcements").innerHTML = "Successfully purchased: " + upgrade.name;
     }
     else {
