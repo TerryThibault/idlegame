@@ -9,9 +9,25 @@
         <p id="resources"></p>
     </div>
     <div class="w3-container w3-half">
-        <p id="announcements">hello</p>
+        <p id="announcements"></p>
     </div>
-    <div id="resourceContainers" class="w3-container w3-quarter">
+    <div class="w3-container w3-quarter">
+        <div class="w3-bar">
+            <div onclick="changeMenu(BUILDINGS)" class="w3-bar-item w3-button w3-border w3-block w3-ripple w3-half w3-margin">
+            Buildings
+            </div>
+            <div onclick="changeMenu(UPGRADES)" class="w3-bar-item w3-button w3-border w3-block w3-ripple w3-half w3-margin">
+            Upgrades
+            </div>
+        </div>
+        <div id="building menu">
+            <div id="resourceContainers">
+            </div>
+        </div>
+        <div id="upgrade menu">
+            <div id="upgradeContainers">
+            </div>
+        </div>
     </div>
 </div>
 
@@ -25,10 +41,10 @@
 -->
 
 <div style="display: none" id="resourceTemplate">
-        <div onclick="buy(_resourceObject)" class="w3-bar-item w3-button w3-border w3-block w3-ripple w3-left-align"> 
-        _resourceName<br>
-        <font id="_resourcePrice Price" size="1"></font>
-        </div><br>
+            <div onclick="buy(_resourceObject)" class="w3-bar-item w3-button w3-border w3-block w3-ripple w3-left-align"> 
+            _resourceName<br>
+            <font id="_resourcePrice Price" size="1"></font>
+            </div><br>
 </div>
 
 
@@ -52,14 +68,37 @@ var multiplier = .10; // amount by which price increases each purchase
 var annoucementTimeoutLength = 5000;
 var annoucementTimeout;
 
-var Miner = new Resource("Miner", 0, 0, 10, .10);
+var Miner = new Resource("Miner", 0, 0, 10, .20);
 var Robot = new Resource("Robot", 0, 0, 100, 1);
 var Dust_Rocket = new Resource("Dust Rocket", 0, 0, 1000, 50);
 var Mining_Laser = new Resource("Mining Laser", 0, 0, 10000, 1000);
 var Planet_Destroyer = new Resource("Planet Destroyer", 0, 0, 100000, 100000);
 
+var BUILDINGS = 0;
+var UPGRADES = 1;
+var menuState = 0;
+
 drawResourceContainers();
 updatePrices(); 
+
+function changeMenu(state) {
+    if(menuState != state) {
+        switch(state) {
+            case BUILDINGS:
+                document.getElementById("upgrade menu").style.visibility = "hidden";
+                document.getElementById("building menu").style.visibility = "visible";
+                break;
+            case UPGRADES:
+                document.getElementById("building menu").style.visibility = "hidden";
+                document.getElementById("upgrade menu").style.visibility = "visible";
+                break;
+            default:
+                alert("Unexpected Error");
+                break;
+        }
+        menuState = state;
+    }
+}
 
 function drawResourceContainers() {
     // Grab the template
