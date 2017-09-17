@@ -41,9 +41,14 @@
 -->
 
 <div style="display: none" id="resourceTemplate">
-            <div onclick="buy(_resourceObject)" class="w3-bar-item w3-button w3-border w3-block w3-ripple w3-left-align"> 
-            _resourceName<br>
-            <font id="_resourcePrice Price" size="1"></font>
+            <div onclick="buy(_resourceObject)" class="w3-row w3-button w3-border w3-block w3-ripple"> 
+                <div class="w3-bar-item w3-left-align w3-quarter" style="padding-left: 0;padding-right: 0;">
+                    <font id="_resourceNumber Number" size="5">0</font>
+                </div>
+                <div class="w3-bar-item w3-left-align w3-threequarter">
+                    _resourceName<br>
+                    <font id="_resourcePrice Price" size="1"></font>
+                </div>
             </div><br>
 </div>
 
@@ -107,6 +112,7 @@ function drawResourceContainers() {
     for(const resource of resources) {
         var tmp = template;
         tmp = tmp.replace("_resourceObject", resource.name.replace(" ", "_"));
+        tmp = tmp.replace("_resourceNumber", resource.name);
         tmp = tmp.replace("_resourceName", resource.name);
         tmp = tmp.replace("_resourcePrice", resource.name);
         document.getElementById("resourceContainers").innerHTML += tmp
@@ -121,14 +127,20 @@ function updateMoney() {
 function updateIncome() {
     let total = 0;
     for(const resource of resources) {
-      total += resource.number * resource.income;
+        total += resource.number * resource.income;
     }
     totalIncome = total;
 }
 
 function updatePrices() {
     for(const resource of resources) {
-      document.getElementById(resource.name + " Price").innerHTML = Math.ceil(resource.price);
+        document.getElementById(resource.name + " Price").innerHTML = Math.ceil(resource.price);
+    }
+}
+
+function updateNumber() {
+    for(const resource of resources) {
+        document.getElementById(resource.name + " Number").innerHTML = resource.number;
     }
 }
 
@@ -143,18 +155,19 @@ function clearAnnouncement() {
 
 function buy(resource) {
 	if (spacedust >= resource.price) {
-		spacedust -= resource.price;
-		resource.number++;
-		resource.price += resource.price * multiplier;
-        updateIncome();
-        updateMoney();
-        updatePrices();
-        document.getElementById("announcements").innerHTML = "Successfully purchased: " + resource.name + ". Now you have: " + resource.number;
+      spacedust -= resource.price;
+      resource.number++;
+      resource.price += resource.price * multiplier;
+          updateIncome();
+          updateMoney();
+          updatePrices();
+          updateNumber();
+          document.getElementById("announcements").innerHTML = "Successfully purchased: " + resource.name + ". Now you have: " + resource.number;
 	} 
   else { 
-        document.getElementById("announcements").innerHTML = "Error: Not enough space dust!"; 
+      document.getElementById("announcements").innerHTML = "Error: Not enough space dust!"; 
 	}
-    clearTimeout(annoucementTimeout);
-    annoucementTimeout = setTimeout(clearAnnouncement, annoucementTimeoutLength);
+      clearTimeout(annoucementTimeout);
+      annoucementTimeout = setTimeout(clearAnnouncement, annoucementTimeoutLength);
 }
 </script>
