@@ -13,14 +13,14 @@
     </div>
     <div class="w3-container w3-quarter">
         <div class="w3-bar">
-            <div onclick="changeMenu(BUILDINGS)" class="w3-bar-item w3-button w3-border w3-block w3-ripple w3-half w3-margin">
-            Buildings
+            <div onclick="changeMenu(RESOURCES)" class="w3-bar-item w3-button w3-border w3-block w3-ripple w3-half w3-margin">
+            Resources
             </div>
             <div onclick="changeMenu(UPGRADES)" class="w3-bar-item w3-button w3-border w3-block w3-ripple w3-half w3-margin">
             Upgrades
             </div>
         </div>
-        <div id="building menu">
+        <div id="resource menu">
             <div id="resourceContainers">
             </div>
         </div>
@@ -41,7 +41,7 @@
 -->
 
 <div style="display: none" id="resourceTemplate">
-            <div onclick="buy(_resourceObject)" class="w3-row w3-button w3-border w3-block w3-ripple"> 
+            <div onclick="buyResource(_resourceObject)" class="w3-row w3-button w3-border w3-block w3-ripple"> 
                 <div class="w3-bar-item w3-left-align w3-quarter" style="padding-left: 0;padding-right: 0;">
                     <font id="_resourceNumber Number" size="5">0</font>
                 </div>
@@ -52,11 +52,31 @@
             </div><br>
 </div>
 
+<!-- Template to be used by the JS that writes to the DOM 
+
+    The idea here is that I'm going to use a JS loop (for each resource) to make all of the resource containers (see:resourceContainers)
+    For each resource, replace the _resourceObject with the object itself (variable name), the _resourceName with object.Name, etc.
+
+    This make my source HTML a lot prettier.
+-->
+
+<div style="display: none" id="upgradeTemplate">
+            <div onclick="buyResource(_resourceObject)" class="w3-row w3-button w3-border w3-block w3-ripple"> 
+                <div class="w3-bar-item w3-left-align w3-quarter" style="padding-left: 0;padding-right: 0;">
+                    <font id="_resourceNumber Number" size="5">0</font>
+                </div>
+                <div class="w3-bar-item w3-left-align w3-threequarter">
+                    _resourceName<br>
+                    <font id="_resourcePrice Price" size="1"></font>
+                </div>
+            </div><br>
+</div>
 
 <script>
 // Production sources {number of sources, level of the sources, price, income per resource}
 var updateRate = 200;
 window.setInterval(updateMoney, updateRate);
+
 var resources = []
 function Resource(name, number, level, price, income) {
     this.name = name;
@@ -64,7 +84,15 @@ function Resource(name, number, level, price, income) {
     this.level = level;
     this.price = price;
     this.income = income;
-	resources.push(this);
+}
+
+var upgrades = [];
+function Upgrade(name, price, description, type, resource) {
+    this.name = name;
+    this.price = price;
+    this.description = description;
+    this.type = type;
+    this.resource = resource;
 }
 
 var spacedust = 0;
@@ -73,29 +101,33 @@ var multiplier = .10; // amount by which price increases each purchase
 var annoucementTimeoutLength = 5000;
 var annoucementTimeout;
 
-var Miner = new Resource("Miner", 0, 0, 10, .20);
-var Robot = new Resource("Robot", 0, 0, 100, 1);
-var Dust_Rocket = new Resource("Dust Rocket", 0, 0, 1000, 50);
-var Mining_Laser = new Resource("Mining Laser", 0, 0, 10000, 1000);
-var Planet_Destroyer = new Resource("Planet Destroyer", 0, 0, 100000, 100000);
+resources.push(new Resource("Miner", 0, 0, 10, .20));
+resources.push(new Resource("Robot", 0, 0, 100, 1));
+resources.push(new Resource("Dust Rocket", 0, 0, 1000, 50));
+resources.push(new Resource("Mining Laser", 0, 0, 10000, 1000));
+resources.push(new Resource("Planet Destroyer", 0, 0, 100000, 100000));
 
-var BUILDINGS = 0;
+upgrades.push(new Upgrade("Pickaxes", 5, "no description", 1, 1));
+
+var RESOURCES = 0;
 var UPGRADES = 1;
-var menuState = 0;
+var menuState = -1;
 
 drawResourceContainers();
-updatePrices(); 
+updatePrices();
+updateUpgrades();
+changeMenu(RESOURCES);
 
 function changeMenu(state) {
     if(menuState != state) {
         switch(state) {
-            case BUILDINGS:
-                document.getElementById("upgrade menu").style.visibility = "hidden";
-                document.getElementById("building menu").style.visibility = "visible";
+            case RESOURCES:
+                document.getElementById("upgrade menu").style.display = "none";
+                document.getElementById("resource menu").style.display = "block";
                 break;
             case UPGRADES:
-                document.getElementById("building menu").style.visibility = "hidden";
-                document.getElementById("upgrade menu").style.visibility = "visible";
+                document.getElementById("resource menu").style.display = "none";
+                document.getElementById("upgrade menu").style.display = "block";
                 break;
             default:
                 alert("Unexpected Error");
@@ -144,6 +176,21 @@ function updateNumber() {
     }
 }
 
+function updateUpgrades() {
+    // Grab the template
+    var template = document.getElementById("upgradeTemplate").innerHTML;
+    document.getElementById("upgradeContainers").innerHTML = "";
+    
+    for(const upgrade of upgrades) {
+        var tmp = template;
+        tmp = tmp.replace("_resourceObject", upgrade.name.replace(" ", "_"));
+        tmp = tmp.replace("_resourceNumber", upgrade.name);
+        tmp = tmp.replace("_resourceName", upgrade.name);
+        tmp = tmp.replace("_resourcePrice", upgrade.name);
+        document.getElementById("upgradeContainers").innerHTML += tmp;
+    }
+}
+
 function mineDust() {
     spacedust += 1;
     updateMoney();
@@ -153,21 +200,40 @@ function clearAnnouncement() {
     document.getElementById("announcements").innerHTML = "";
 }
 
-function buy(resource) {
-	if (spacedust >= resource.price) {
-      spacedust -= resource.price;
-      resource.number++;
-      resource.price += resource.price * multiplier;
-          updateIncome();
-          updateMoney();
-          updatePrices();
-          updateNumber();
-          document.getElementById("announcements").innerHTML = "Successfully purchased: " + resource.name + ". Now you have: " + resource.number;
-	} 
-  else { 
-      document.getElementById("announcements").innerHTML = "Error: Not enough space dust!"; 
-	}
-      clearTimeout(annoucementTimeout);
-      annoucementTimeout = setTimeout(clearAnnouncement, annoucementTimeoutLength);
+function buyUpgrade(upgrade) {
+    if(spacedust >= upgrade.price) {
+        spacedust -= resource.price;
+        upgrades.splice(upgrades.indexOf(upgrade), 1);
+        updateIncome();
+        updateMoney();
+        updatePrices();
+        updateUpgrades();
+        document.getElementById("announcements").innerHTML = "Successfully purchased: " + upgrade.name;
+    }
+    else {
+        document.getElementById("announcements").innerHTML = "Error: Not enough space dust!";
+    }
+    
+    clearTimeout(annoucementTimeout);
+    annoucementTimeout = setTimeout(clearAnnouncement, annoucementTimeoutLength);
+}
+
+function buyResource(resource) {
+    if (spacedust >= resource.price) {
+        spacedust -= resource.price;
+        resource.number++;
+        resource.price += resource.price * multiplier;
+        updateIncome();
+        updateMoney();
+        updatePrices();
+        updateNumber();
+        document.getElementById("announcements").innerHTML = "Successfully purchased: " + resource.name + ". Now you have: " + resource.number;
+    } 
+    else { 
+        document.getElementById("announcements").innerHTML = "Error: Not enough space dust!"; 
+    }
+    
+    clearTimeout(annoucementTimeout);
+    annoucementTimeout = setTimeout(clearAnnouncement, annoucementTimeoutLength);
 }
 </script>
