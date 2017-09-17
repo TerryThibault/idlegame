@@ -49,7 +49,7 @@
     This make my source HTML a lot prettier.
 -->
 
-<div style="display: none">
+<div style="display: none" id="resourceTemplate">
         <div onclick="buy(_resourceObject)" class="w3-bar-item w3-button w3-border w3-block w3-ripple w3-left-align"> 
         _resourceName<br>
         <font id="_resoucePrice Price" size="1"></font>
@@ -85,8 +85,15 @@ var planetDestroyers = new Resource("Planet Destroyer", 0, 0, 100000, 100000);
 updatePrices();
 
 function drawResourceContainers() {
+    // Grab the template
+    var template = document.getElementById("resourceTemplate");
+
     for(const resource of resources) {
-        document.getElementById("resourceContainers").innerHTML += 
+        var tmp = template;
+        tmp.replace("_resourceObject", resource);
+        tmp.replace("_resourceName", resource.name);
+        tmp.replace("_resourcePrice", resource.price);
+        document.getElementById("resourceContainers").innerHTML += tmp;
     }
 }
 
