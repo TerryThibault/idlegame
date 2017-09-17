@@ -141,12 +141,12 @@ function drawResourceContainers() {
     // Grab the template
     var template = document.getElementById("resourceTemplate").innerHTML;
 
-    for(const resource of resources) {
+    for(var i = 0; i < resources.length; ++i) {
         var tmp = template;
-        tmp = tmp.replace("_resourceObject", resource.name.replace(" ", "_"));
-        tmp = tmp.replace("_resourceNumber", resource.name);
-        tmp = tmp.replace("_resourceName", resource.name);
-        tmp = tmp.replace("_resourcePrice", resource.name);
+        tmp = tmp.replace("_resourceObject", "resources[" + i + "]");
+        tmp = tmp.replace("_resourceNumber", resources[i].name);
+        tmp = tmp.replace("_resourceName", resources[i].name);
+        tmp = tmp.replace("_resourcePrice", resources[i].name);
         document.getElementById("resourceContainers").innerHTML += tmp
     }
 }
