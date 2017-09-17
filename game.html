@@ -64,14 +64,9 @@
 -->
 
 <div style="display: none" id="upgradeTemplate">
-            <div onclick="buyUpgrade(_upgradeObject)" class="w3-row w3-button w3-border w3-block w3-ripple"> 
-                <div class="w3-bar-item w3-left-align w3-quarter" style="padding-left: 0;padding-right: 0;">
-                    <font id="_upgradeNumber Number" size="5">0</font>
-                </div>
-                <div class="w3-bar-item w3-left-align w3-threequarter">
-                    _upgradeName<br>
-                    <font id="_upgradePrice Price" size="1"></font>
-                </div>
+            <div onclick="buyUpgrade(_upgradeObject)" class="w3-row w3-button w3-border w3-block w3-ripple w3-left-align">
+                _upgradeName<br>
+                <font id="_upgradePrice Price" size="1"></font>
             </div><br>
 </div>
 
@@ -110,15 +105,15 @@ resources.push(new Resource("Dust Rocket", 0, 0, 1000, 50));
 resources.push(new Resource("Mining Laser", 0, 0, 10000, 1000));
 resources.push(new Resource("Planet Destroyer", 0, 0, 100000, 100000));
 
-upgrades.push(new Upgrade("Pickaxes", 5, "no description", 1, 1));
+upgrades.push(new Upgrade("Pickaxes 1", 5, "no description", 1, resources[0]));
 
 var RESOURCES = 0;
 var UPGRADES = 1;
 var menuState = -1;
 
 drawResourceContainers();
-updatePrices();
 drawUpgrades();
+updatePrices();
 changeMenu(RESOURCES);
 
 function changeMenu(state) {
@@ -171,6 +166,9 @@ function updatePrices() {
     for(const resource of resources) {
         document.getElementById(resource.name + " Price").innerHTML = Math.ceil(resource.price);
     }
+    for(const upgrade of upgrades) {
+        document.getElementById(upgrade.name + " Price").innerHTML = Math.ceil(upgrade.price);
+    }
 }
 
 function updateNumber() {
@@ -187,9 +185,8 @@ function drawUpgrades() {
     for(var i = 0; i < upgrades.length; ++i) {
         var tmp = template;
         tmp = tmp.replace("_upgradeObject", "upgrades[" + i + "]");
-        tmp = tmp.replace("_upgradeNumber", upgrade.name);
-        tmp = tmp.replace("_upgradeName", upgrade.name);
-        tmp = tmp.replace("_upgradePrice", upgrade.name);
+        tmp = tmp.replace("_upgradeName", upgrades[i].name);
+        tmp = tmp.replace("_upgradePrice", upgrades[i].name);
         document.getElementById("upgradeContainers").innerHTML += tmp;
     }
 }
@@ -203,14 +200,23 @@ function clearAnnouncement() {
     document.getElementById("announcements").innerHTML = "";
 }
 
+function activateUpgrade(upgrade) {
+    if(upgrade.type == 1) {
+        upgrade.resource.income *= 2;
+        upgrade.resource.level ++;
+        upgrades.push(new Upgrade(upgrade.name.substring(0, upgrade.name.length - 2) + " " +(upgrade.resource.level + 1), upgrade.price * 10, "no description", 1, resources[0]));
+    }
+}
+
 function buyUpgrade(upgrade) {
     if(spacedust >= upgrade.price) {
-        spacedust -= resource.price;
+        spacedust -= upgrade.price;
         upgrades.splice(upgrades.indexOf(upgrade), 1);
+        activateUpgrade(upgrade);
         updateIncome();
         updateMoney();
-        updatePrices();
         drawUpgrades();
+        updatePrices();
         document.getElementById("announcements").innerHTML = "Successfully purchased: " + upgrade.name;
     }
     else {
