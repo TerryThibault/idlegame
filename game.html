@@ -3,40 +3,15 @@
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 <body>
 <div class="w3-row">
-<div class="w3-row">
     <div class="w3-container w3-quarter">
         <div onclick="mineDust()" class="w3-bar-item w3-button w3-border w3-block w3-ripple">Mine Dust</div><br>
         <p id="total"></p>
         <p id="resources"></p>
     </div>
     <div class="w3-container w3-half">
-        <p id="announcements"></p>
+        <p id="announcements">hello</p>
     </div>
     <div id="resourceContainers" class="w3-container w3-quarter">
-        <div onclick="buy(people)" class="w3-bar-item w3-button w3-border w3-block w3-ripple w3-left-align">
-        Miner<br>
-        <font id="Miner Price" size="1"></font>
-        </div><br>
-
-        <div onclick="buy(robots)" class="w3-bar-item w3-button w3-border w3-block w3-ripple w3-left-align">
-        Mining Robot<br>
-        <font id="Robot Price" size="1"></font>
-        </div><br>
-    
-        <div onclick="buy(dustRockets)" class="w3-bar-item w3-button w3-border w3-block w3-ripple w3-left-align">
-        Dust Harvesting Rocket<br>
-        <font id="Dust Rocket Price" size="1"></font>
-        </div><br>
-    
-        <div onclick="buy(lasers)" class="w3-bar-item w3-button w3-border w3-block w3-ripple w3-left-align">
-        Mining Laser<br>
-        <font id="Mining Laser Price" size="1"></font>
-        </div><br>
-    
-        <div onclick="buy(planetDestroyers)" class="w3-bar-item w3-button w3-border w3-block w3-ripple w3-left-align">
-        Planet Destroyer<br>
-        <font id="Planet Destroyer Price" size="1"></font>
-        </div><br>
     </div>
 </div>
 
@@ -52,7 +27,7 @@
 <div style="display: none" id="resourceTemplate">
         <div onclick="buy(_resourceObject)" class="w3-bar-item w3-button w3-border w3-block w3-ripple w3-left-align"> 
         _resourceName<br>
-        <font id="_resoucePrice Price" size="1"></font>
+        <font id="_resourcePrice Price" size="1"></font>
         </div><br>
 </div>
 
@@ -77,23 +52,25 @@ var multiplier = .10; // amount by which price increases each purchase
 var annoucementTimeoutLength = 5000;
 var annoucementTimeout;
 
-var people = new Resource("Miner", 0, 0, 10, .10);
-var robots = new Resource("Robot", 0, 0, 100, 1);
-var dustRockets = new Resource("Dust Rocket", 0, 0, 1000, 50);
-var lasers = new Resource("Mining Laser", 0, 0, 10000, 1000);
-var planetDestroyers = new Resource("Planet Destroyer", 0, 0, 100000, 100000);
-updatePrices();
+var Miner = new Resource("Miner", 0, 0, 10, .10);
+var Robot = new Resource("Robot", 0, 0, 100, 1);
+var Dust_Rocket = new Resource("Dust Rocket", 0, 0, 1000, 50);
+var Mining_Laser = new Resource("Mining Laser", 0, 0, 10000, 1000);
+var Planet_Destroyer = new Resource("Planet Destroyer", 0, 0, 100000, 100000);
+
+drawResourceContainers();
+updatePrices(); 
 
 function drawResourceContainers() {
     // Grab the template
-    var template = document.getElementById("resourceTemplate");
+    var template = document.getElementById("resourceTemplate").innerHTML;
 
     for(const resource of resources) {
         var tmp = template;
-        tmp.replace("_resourceObject", resource);
-        tmp.replace("_resourceName", resource.name);
-        tmp.replace("_resourcePrice", resource.price);
-        document.getElementById("resourceContainers").innerHTML += tmp;
+        tmp = tmp.replace("_resourceObject", resource.name.replace(" ", "_"));
+        tmp = tmp.replace("_resourceName", resource.name);
+        tmp = tmp.replace("_resourcePrice", resource.name);
+        document.getElementById("resourceContainers").innerHTML += tmp
     }
 }
 
@@ -130,9 +107,9 @@ function buy(resource) {
 		spacedust -= resource.price;
 		resource.number++;
 		resource.price += resource.price * multiplier;
-    updateIncome();
-    updateMoney();
-    updatePrices();
+        updateIncome();
+        updateMoney();
+        updatePrices();
         document.getElementById("announcements").innerHTML = "Successfully purchased: " + resource.name + ". Now you have: " + resource.number;
 	} 
   else { 
